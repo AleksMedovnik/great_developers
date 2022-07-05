@@ -1,16 +1,18 @@
-from django.shortcuts import render
-from rest_framework import generics
 from .models import Person
-from .serializers import PersonSerializer
 from rest_framework.views import APIView
 from rest_framework.response import Response
-
-
-# class PersonAPIViews(generics.ListAPIView):
-#     queryset = Person.objects.all()
-#     serializer_class = PersonSerializer
+from django.forms import model_to_dict
 
 
 class PersonAPIViews(APIView):
    def get(self, request):
-       return Response({'title', 'Linus'})
+       lst=Person.objects.all().values()
+       return Response({'posts': list(lst)})
+
+   def post(self, request):
+       post_new=Person.objects.create(
+           title=request.data['title'],
+           content=request.data['content'],
+           cat_id=request.data['cat_id']
+       )
+       return Response({'post': model_to_dict(post_new)})
